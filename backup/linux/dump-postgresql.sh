@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# Backup do banco de dados PostgreSQL - VR
+# Backup do banco de dados PostgreSQL
 # =============================================================================
 
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
@@ -9,10 +9,22 @@ export PGPASSFILE="/root/.pgpass"
 # -----------------------------------------------------------------------------
 # Configurações de conexão
 # -----------------------------------------------------------------------------
+
+# Usuário do PostgreSQL (normalmente "postgres")
 PG_USER="postgres"
-PG_PORT="38561"
+
+# Porta do PostgreSQL (padrão: 5432 — altere se o servidor usar outra porta)
+PG_PORT="5432"
+
+# Caminho dos binários do PostgreSQL
+# Exemplos:
+#   PostgreSQL 14: /usr/pgsql-14/bin
+#   PostgreSQL 15: /usr/pgsql-15/bin
+#   Ubuntu/Debian: /usr/lib/postgresql/14/bin
 PG_BIN="/usr/pgsql-14/bin"
-NOME="vr"
+
+# Nome do banco de dados que será feito o backup
+NOME="nome_do_banco"
 
 # -----------------------------------------------------------------------------
 # Configurações de backup
@@ -22,11 +34,27 @@ EXTENSAO=".sfwn"
 EXTENSAO2=".tar.gz"
 ARQUIVO="${NOME}_${HOJE}${EXTENSAO}"
 ARQUIVO2="${NOME}_${HOJE}"
-PATH_BK="/vr/backup"
-LOG_DIR="/vr/backup/log"
+
+# Pasta onde os arquivos de backup serão salvos
+# Exemplos:
+#   /mnt/backup
+#   /srv/backup
+#   /home/backup
+PATH_BK="/mnt/backup"
+
+# Pasta onde os logs de execução serão salvos (recomendado manter dentro de PATH_BK)
+LOG_DIR="/mnt/backup/log"
+
 LOG="$LOG_DIR/$ARQUIVO2.log"
-LOCKFILE="/tmp/bk_vr.lock"
+
+# Nome do lockfile — evita execuções simultâneas
+# Se precisar rodar múltiplos bancos no mesmo servidor, use nomes diferentes
+# Exemplo: /tmp/bk_nome_do_banco.lock
+LOCKFILE="/tmp/bk_postgresql.lock"
+
 DATA=$(date +%Y-%m-%d_%H:%M:%S)
+
+# Quantos dias manter os backups e logs antes de deletar automaticamente
 RETENCAO_DIAS=7
 
 # -----------------------------------------------------------------------------
